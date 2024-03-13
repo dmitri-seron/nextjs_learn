@@ -30,7 +30,7 @@ async function seedUsers(client) {
         const hashedPassword = await bcrypt.hash(user.password, 10);
         return client.$executeRaw`
         INSERT INTO users (id, name, email, password)
-        VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
+        VALUES (UUID(${user.id}), ${user.name}, ${user.email}, ${hashedPassword})
         ON CONFLICT (id) DO NOTHING;
       `;
       }),
@@ -70,7 +70,7 @@ async function seedInvoices(client) {
       invoices.map(
         (invoice) => client.$executeRaw`
         INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+        VALUES (UUID(${invoice.customer_id}), ${invoice.amount}, ${invoice.status}, Date(${invoice.date}))
         ON CONFLICT (id) DO NOTHING;
       `,
       ),
@@ -109,7 +109,7 @@ async function seedCustomers(client) {
       customers.map(
         (customer) => client.$executeRaw`
         INSERT INTO customers (id, name, email, image_url)
-        VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
+        VALUES (UUID(${customer.id}), ${customer.name}, ${customer.email}, ${customer.image_url})
         ON CONFLICT (id) DO NOTHING;
       `,
       ),
