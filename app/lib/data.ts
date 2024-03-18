@@ -118,7 +118,7 @@ export async function fetchFilteredInvoices(query: string, currentPage: number) 
         OFFSET ${offset}
     `;
 
-    return invoices.rows;
+    return invoices;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoices.');
