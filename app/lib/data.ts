@@ -152,6 +152,9 @@ export async function fetchInvoicesPages(query: string) {
 
 export async function fetchInvoiceById(id: string) {
   noStore();
+
+  console.log(id);
+
   try {
     const data = await client.$queryRaw<InvoiceForm>`
         SELECT invoices.id,
@@ -159,10 +162,10 @@ export async function fetchInvoiceById(id: string) {
                invoices.amount,
                invoices.status
         FROM invoices
-        WHERE invoices.id = ${id};
+        WHERE invoices.id = UUID(${id});
     `;
 
-    const invoice = data.rows.map((invoice) => ({
+    const invoice = data.map((invoice) => ({
       ...invoice, // Convert amount from cents to dollars
       amount: invoice.amount / 100,
     }));
@@ -184,7 +187,7 @@ export async function fetchCustomers() {
         ORDER BY name ASC
     `;
 
-    const customers = data.rows;
+    const customers = data;
     return customers;
   } catch (err) {
     console.error('Database Error:', err);
@@ -212,7 +215,7 @@ export async function fetchFilteredCustomers(query: string) {
         ORDER BY customers.name ASC
     `;
 
-    const customers = data.rows.map((customer) => ({
+    const customers = data.map((customer) => ({
       ...customer, total_pending: formatCurrency(customer.total_pending), total_paid: formatCurrency(customer.total_paid),
     }));
 
@@ -229,7 +232,7 @@ export async function getUser(email: string) {
     const user = await client.$queryRaw`SELECT *
                                         FROM users
                                         WHERE email = ${email}`;
-    return user.rows[0] as User;
+    return user as User;
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');

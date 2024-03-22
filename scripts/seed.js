@@ -70,7 +70,7 @@ async function seedInvoices(client) {
       invoices.map(
         (invoice) => client.$executeRaw`
         INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (UUID(${invoice.customer_id}), ${invoice.amount}, ${invoice.status}, Date(${invoice.date}))
+        VALUES (UUID(${invoice.customer_id}), ${invoice.amount}, ${invoice.status}, Date (${invoice.date}))
         ON CONFLICT (id) DO NOTHING;
       `,
       ),
