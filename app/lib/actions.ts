@@ -3,6 +3,8 @@
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 
 import prisma from './db/prisma';
 
@@ -60,25 +62,17 @@ export async function createInvoice(prevState: State, formData: FormData) {
   redirect('/dashboard/invoices');
 }
 
-export async function updateInvoice(
-  id: string,
-  prevState: State,
-  formData: FormData,
-) {
+export async function updateInvoice(id: string, prevState: State, formData: FormData) {
 
   console.log('update');
 
-
   const validatedFields = UpdateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
+    customerId: formData.get('customerId'), amount: formData.get('amount'), status: formData.get('status'),
   });
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Update Invoice.',
+      errors: validatedFields.error.flatten().fieldErrors, message: 'Missing Fields. Failed to Update Invoice.',
     };
   }
 
@@ -87,9 +81,11 @@ export async function updateInvoice(
 
   try {
     await prisma.$executeRaw`
-      UPDATE invoices
-      SET customer_id = UUID(${customerId}), amount = ${amountInCents}, status = ${status}
-      WHERE id = UUID(${id})
+        UPDATE invoices
+        SET customer_id = UUID(${customerId}),
+            amount      = ${amountInCents},
+            status      = ${status}
+        WHERE id = UUID(${id})
     `;
   } catch (error) {
     return { message: 'Database Error: Failed to Update Invoice.' };
@@ -112,4 +108,21 @@ export async function deleteInvoice(id: string) {
 
   revalidatePath('/dashboard/invoices');
 
+}
+
+export async function authenticate(prevState: string | undefined, formData: FormData) {
+  try {
+    await signIn('credentials', formData);
+
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
+  }
 }

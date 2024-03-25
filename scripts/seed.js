@@ -6,7 +6,7 @@ const {
 } = require('../app/lib/placeholder-data.js');
 const bcrypt = require('bcrypt');
 
-const prisma = require('../app/lib/db/prisma');
+import prisma from './db/prisma'
 
 
 async function seedUsers(client) {
