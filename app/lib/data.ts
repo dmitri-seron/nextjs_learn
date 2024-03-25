@@ -1,5 +1,4 @@
-const prisma = require('./db/prisma');
-const client = prisma;
+import prisma from './db/prisma'
 
 import {
   CustomerField,
@@ -23,7 +22,7 @@ export async function fetchRevenue() {
     // Don't do this in production :)
     console.log('Fetching revenue data...');
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    const data = await client.$queryRaw<Revenue[]>`SELECT *
+    const data = await prisma.$queryRaw<Revenue[]>`SELECT *
                                                    FROM revenue`;
     console.log('Data fetch completed after 3 seconds.');
 
@@ -37,7 +36,7 @@ export async function fetchRevenue() {
 export async function fetchLatestInvoices() {
   noStore();
   try {
-    const data = await client.$queryRaw<LatestInvoiceRaw>`
+    const data = await prisma.$queryRaw<LatestInvoiceRaw>`
         SELECT invoices.amount,
                customers.name,
                customers.image_url,
@@ -62,11 +61,11 @@ export async function fetchCardData() {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = client.$queryRaw`SELECT COUNT(*)
+    const invoiceCountPromise = prisma.$queryRaw`SELECT COUNT(*)
                                                  FROM invoices`;
-    const customerCountPromise = client.$queryRaw`SELECT COUNT(*)
+    const customerCountPromise = prisma.$queryRaw`SELECT COUNT(*)
                                                   FROM customers`;
-    const invoiceStatusPromise = client.$queryRaw`SELECT SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END)    AS "paid",
+    const invoiceStatusPromise = prisma.$queryRaw`SELECT SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END)    AS "paid",
                                                          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
                                                   FROM invoices`;
 
@@ -94,7 +93,7 @@ export async function fetchFilteredInvoices(query: string, currentPage: number) 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const invoices = await client.$queryRaw<InvoicesTable>`
+    const invoices = await prisma.$queryRaw<InvoicesTable>`
         SELECT invoices.id,
                invoices.amount,
                invoices.date,
@@ -128,7 +127,7 @@ export async function fetchFilteredInvoices(query: string, currentPage: number) 
 export async function fetchInvoicesPages(query: string) {
   noStore();
   try {
-    const count = await client.$queryRaw`SELECT COUNT(*)
+    const count = await prisma.$queryRaw`SELECT COUNT(*)
                                          FROM invoices
                                                   JOIN customers ON invoices.customer_id = customers.id
                                          WHERE customers.name ILIKE ${`%${query}%`}
@@ -156,7 +155,7 @@ export async function fetchInvoiceById(id: string) {
   console.log(id);
 
   try {
-    const data = await client.$queryRaw<InvoiceForm>`
+    const data = await prisma.$queryRaw<InvoiceForm>`
         SELECT invoices.id,
                invoices.customer_id,
                invoices.amount,
@@ -180,7 +179,7 @@ export async function fetchInvoiceById(id: string) {
 export async function fetchCustomers() {
   noStore();
   try {
-    const data = await client.$queryRaw<CustomerField>`
+    const data = await prisma.$queryRaw<CustomerField>`
         SELECT id,
                name
         FROM customers
@@ -198,7 +197,7 @@ export async function fetchCustomers() {
 export async function fetchFilteredCustomers(query: string) {
   noStore();
   try {
-    const data = await client.$queryRaw<CustomersTableType>`
+    const data = await prisma.$queryRaw<CustomersTableType>`
         SELECT customers.id,
                customers.name,
                customers.email,
@@ -229,7 +228,7 @@ export async function fetchFilteredCustomers(query: string) {
 export async function getUser(email: string) {
   noStore();
   try {
-    const user = await client.$queryRaw`SELECT *
+    const user = await prisma.$queryRaw`SELECT *
                                         FROM users
                                         WHERE email = ${email}`;
     return user as User;
