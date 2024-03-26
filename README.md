@@ -33,7 +33,7 @@ mkdir next-js
 3. Clone the repo
 
 ```sh
-cd ~/Documents/Sites
+cd ~/Documents/Sites/next-js
 git clone git@github.com:dmitri-seron/nextjs_learn.git
 ```
 
