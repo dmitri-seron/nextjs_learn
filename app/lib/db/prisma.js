@@ -1,5 +1,4 @@
-import {PrismaClient} from '@prisma/client'
-
+const {PrismaClient} = require('@prisma/client');
 // See here: https://github.com/prisma/prisma-client-js/issues/228#issuecomment-618433162
 /** @type {PrismaClient} */
 let prisma;
@@ -16,4 +15,4 @@ else {
     prisma = global.prisma
 }
 
-export default prisma
+module.exports = prisma
