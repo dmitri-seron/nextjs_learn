@@ -40,12 +40,26 @@ git clone git@github.com:dmitri-seron/nextjs_learn.git
 4. Navigate to the project folder. And run ddev project.
 
 ```sh
-cd ~/Documents/Sites/next-js/next-js
+cd ~/Documents/Sites/next-js/nextjs_learn
 ddev start
 ```
 
-5. Open https://api.next-js.ddev.site/
-6. For login into dashboard use
+5. Create a config file with database connection string and other environment specific options.
+
+```sh
+cd ~/Documents/Sites/next-js/nextjs_learn
+cp .env.example .env
+```
+
+6. Fill a database with a data.
+
+```sh
+cd ~/Documents/Sites/next-js/nextjs_learn
+ddev npm run seed
+```
+
+7. Open https://api.next-js.ddev.site/
+8. For login into dashboard use
 
    **Username:** user@nextmail.com
 
@@ -56,20 +70,20 @@ ddev start
 Describe the project
 
 ```sh
-cd ~/Documents/Sites/next-js/next-js
+cd ~/Documents/Sites/next-js/nextjs_learn
 ddev describe
 ```
 
 Stop the project
 
 ```sh
-cd ~/Documents/Sites/next-js/next-js
+cd ~/Documents/Sites/next-js/nextjs_learn
 ddev stop
 ```
 
 Start the project
 
 ```sh
-cd ~/Documents/Sites/next-js/next-js
+cd ~/Documents/Sites/next-js/nextjs_learn
 ddev start
 ```

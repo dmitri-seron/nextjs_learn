@@ -1,11 +1,11 @@
-name: next-js
+name: nextjs_learn
 type: php
 docroot: ""
 php_version: "8.1"
 webserver_type: nginx-fpm
 xdebug_enabled: false
 additional_hostnames:
-  - api.next-js
+  - api.nextjs_learn
 additional_fqdns: []
 database:
     type: postgres
@@ -16,7 +16,7 @@ web_environment: []
 nodejs_version: "18"
 hooks:
   post-start:
-    - exec: npm run dev
+    - exec: npm install && npm run dev
 
 
 # Key features of DDEV's config.yaml:
